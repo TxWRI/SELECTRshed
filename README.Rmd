@@ -1,0 +1,166 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# SELECTRshed
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of SELECTRshed is to ...
+
+## Installation
+
+You can install the development version of SELECTRshed like so:
+
+``` r
+# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+```
+
+
+## Notes
+
+Native terra flowAccumulation function seems buggy.
+{rivnet} includes delineation functions via {traudem}
+
+- taudem is a pita to install, forget it.
+- revert to whitebox tools or can we do this in R somehow via gdal?
+
+- whitebox seems to be the most reliable way compared to terra's native tools.
+
+- well whitebox has methods for using terra objects! https://whiteboxr.gishub.org/articles/wbt-method.html
+
+- d8pointer is now rewritten using the wbt method. can eliminate code that handles the terra rast conversions tif files.
+
+- should check if {whitebox} plans on re-writting their wrapper functions to use terra objects or are planning to leave as is, or does it matter as long as we are usign the wbt method?
+
+## Example
+
+```{r}
+library(SELECTRdata)
+library(SELECTRshed)
+library(terra)
+#library(FedData)
+
+gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
+wbd <- terra::vect(gpkg, layer = "wbd")
+
+# dem <- FedData::get_ned(template = sf::st_as_sf(wbd),
+#                          res = "1",
+#                          label = "ned")
+
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
+dem <- terra::rast(dem)
+plot(dem)
+# fdr <- create_flow_dir(dem)
+# plot(fdr)
+```
+
+
+Since this DEM is already filled, breached, and hydroenforced for NHD delineations, this step isn't necessary, but included anyways.
+
+```{r}
+breached <- create_breach_depression_lc(dem, distance = 0)
+```
+
+
+```{r}
+fdr <- create_D8_pointer(breached)
+```
+
+
+```{r}
+
+fa <- create_D8_fa(fdr)
+plot(fa)
+```
+
+
+
+
+```{r}
+streams_ras <- create_streams(fa, threshold = 1000)
+plot(streams_ras, col = map.pal("viridis", 1))
+```
+
+
+```{r}
+pourpoint <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
+pourpoint <- terra::vect(pourpoint, layer = "pourpoint")
+#pourpoiint <- terra::project(pourpoint, dem)
+pourpoint_file <- tempfile(fileext = ".shp")
+terra::writeVector(pourpoint, filename = pourpoint_file)
+```
+
+
+
+```{r}
+snapped_pour_point <- tempfile(fileext = ".shp")
+whitebox::wbt_jenson_snap_pour_points(pourpoint_file,
+                               sources(fa),
+                               output = snapped_pour_point,
+                               snap_dist = 5)
+```
+
+```{r}
+watershed <- create_watershed(fdr, pour_points = snapped_pour_point)
+plot(watershed)
+
+
+```
+
+
+I think we can clip streams using the above watershed, then run the wbt.subbasins to get subbasins per stream link.
+Conversly, isobasins should produce roughly equal sized watersheds.
+
+
+What should the wrapper functions actually do?
+- input = hydroenforced dem from nhd
+- snap pour point(s)
+- flow point -> acc -> snap -> watershed -> clip streams and dem -> subbasins or isobasin?
+- return list of file paths, or list of spatraster objects?
+
+- optional argument with output path names
+
+
+
+Other thoughts:
+
+Can I write a function that wraps wbt_functions with something that accepts terra objects?
+ex: `wbt_wrapper(func, ...) {wbt_func(...)}`
+
+wbt method accepts file backed terra spatrasters already! I'm not sure what happens with terra objects only in memory.
+
+what should this packages workflow look like now? 
+
+
+not 100% what should be abstracted away here. can take input dem and get a watershed or get input dem and subwatersheds.
+
+function1 <- input dem, pour point
+
+d8 -> fa -> streams(?) -> snap pour point -> watershed
+
+```
+make_watershed <- function(dem, pour_point) {
+
+d8 <- wbt("fd8_pointer",
+          dem = dem,
+          output = file.path(tempdir(), "d8.tif"))
+          
+fa <- wbt("",
+          dem = d8)          
+
+}
+
+```

@@ -1,0 +1,23 @@
+Package: SELECTRshed
+Type: Package
+Title: Catchment and Subcatchment Delineation
+Version: 0.1.0
+Authors@R: 
+    person(given = "Michael", family = "Schramm", email = "mpschramm@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1876-6592"))
+Description: Use `terra` SpatRaster and SpatVector objects directly with WhiteBox Tools' stream and hydrology functions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+SystemRequirements: WhiteboxTools (https://github.com/jblindsay/whitebox-tools/releases/latest)
+Additional_repositories: https://txwri.r-universe.dev
+Depends:
+    whitebox
+Imports:
+    cli,
+    fs,
+    rlang,
+    terra
+Suggests:
+    SELECTRdata (>= 0.1.0)
+RoxygenNote: 7.3.1
