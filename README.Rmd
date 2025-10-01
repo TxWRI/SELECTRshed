@@ -16,9 +16,13 @@ knitr::opts_chunk$set(
 # SELECTRshed
 
 <!-- badges: start -->
+[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of SELECTRshed is to ...
+Delineate watersheds using whitebox tools and terra objects.
+These functions are designed to interact kindly with SELECTRdata and SELECTR.
+
+
 
 ## Installation
 
@@ -29,138 +33,97 @@ You can install the development version of SELECTRshed like so:
 ```
 
 
-## Notes
 
-Native terra flowAccumulation function seems buggy.
-{rivnet} includes delineation functions via {traudem}
+## Create Subbasins for SELECT
 
-- taudem is a pita to install, forget it.
-- revert to whitebox tools or can we do this in R somehow via gdal?
+Pseudo-workflow goes like this:
 
-- whitebox seems to be the most reliable way compared to terra's native tools.
+```
+1 - Read DEM as a terra SpatRaster object
+2 - Read watershed outlet location as terra SpatVector object
 
-- well whitebox has methods for using terra objects! https://whiteboxr.gishub.org/articles/wbt-method.html
+3 - Breach depressions in the DEM (from step 1)
+4 - Create a flow direction raster from DEM in step 3.
+5 - Create a flow accumulation raster from the flow direction raster in step 4.
+6 - Create a streams raster from the flow accumulation raster (step 5) and threshold for number of upstream cells.
 
-- d8pointer is now rewritten using the wbt method. can eliminate code that handles the terra rast conversions tif files.
+7 - Snap the vector pour point to the stream raster.
+8 - Rasterize the snapped vector pour point.
+9 - Delineate with flow direction raster and pour point raster.
 
-- should check if {whitebox} plans on re-writting their wrapper functions to use terra objects or are planning to leave as is, or does it matter as long as we are usign the wbt method?
+tbd: subbasins
 
-## Example
+```
 
 ```{r}
 library(SELECTRdata)
 library(SELECTRshed)
 library(terra)
-#library(FedData)
+
 
 gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
-wbd <- terra::vect(gpkg, layer = "wbd")
-
-# dem <- FedData::get_ned(template = sf::st_as_sf(wbd),
-#                          res = "1",
-#                          label = "ned")
-
 dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 dem <- terra::rast(dem)
+pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = crs(dem))
 plot(dem)
-# fdr <- create_flow_dir(dem)
-# plot(fdr)
+plot(pourpoint, add = TRUE)
 ```
 
 
 Since this DEM is already filled, breached, and hydroenforced for NHD delineations, this step isn't necessary, but included anyways.
 
 ```{r}
-breached <- create_breach_depression_lc(dem, distance = 0)
-```
-
-
-```{r}
-fdr <- create_D8_pointer(breached)
-```
-
-
-```{r}
-
+## breach depressions in the dem
+breached <- create_breach_depression(dem)
+## create the flow direction raster
+fdr <- create_d8_pointer(breached)
+## create teh flow accumulation raster
 fa <- create_D8_fa(fdr)
-plot(fa)
-```
-
-
-
-
-```{r}
-streams_ras <- create_streams(fa, threshold = 1000)
+## create the streams raster
+streams_ras <- create_streams(fa, threshold = 10000)
 plot(streams_ras, col = map.pal("viridis", 1))
 ```
 
 
 ```{r}
-pourpoint <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
-pourpoint <- terra::vect(pourpoint, layer = "pourpoint")
-#pourpoiint <- terra::project(pourpoint, dem)
-pourpoint_file <- tempfile(fileext = ".shp")
-terra::writeVector(pourpoint, filename = pourpoint_file)
+## write pourpoints to temp folder
+temp_pour_point_file <- paste0(tempdir(), "snapped.shp")
+snapped_pour_point <- snap_pour_point(pour_pts = pourpoint,
+                                      streams = streams_ras,
+                                      output = temp_pour_point_file)
+
+## the spatvectorproxy points to wrong file, might be a os path issue.
+snapped_pour_point <- vect(temp_pour_point_file)
+```
+
+
+```{r}
+
+pour_point_rast <-  rasterize(snapped_pour_point, streams_ras)
+
 ```
 
 
 
 ```{r}
-snapped_pour_point <- tempfile(fileext = ".shp")
-whitebox::wbt_jenson_snap_pour_points(pourpoint_file,
-                               sources(fa),
-                               output = snapped_pour_point,
-                               snap_dist = 5)
-```
-
-```{r}
-watershed <- create_watershed(fdr, pour_points = snapped_pour_point)
+watershed <- create_watershed(d8_pntr = fdr, 
+                              pour_pts = pour_point_rast)
 plot(watershed)
-
-
 ```
 
 
-I think we can clip streams using the above watershed, then run the wbt.subbasins to get subbasins per stream link.
-Conversly, isobasins should produce roughly equal sized watersheds.
-
-
-What should the wrapper functions actually do?
-- input = hydroenforced dem from nhd
-- snap pour point(s)
-- flow point -> acc -> snap -> watershed -> clip streams and dem -> subbasins or isobasin?
-- return list of file paths, or list of spatraster objects?
-
-- optional argument with output path names
 
 
 
-Other thoughts:
+### Other Notes
 
-Can I write a function that wraps wbt_functions with something that accepts terra objects?
-ex: `wbt_wrapper(func, ...) {wbt_func(...)}`
+Why whitebox tools? Watersheding functions are available through the terra and traudem packages, so why use whitebox?
 
-wbt method accepts file backed terra spatrasters already! I'm not sure what happens with terra objects only in memory.
+- I've had difficulties getting reliable results using the recently added flow accumulation and related functions in terra. That is the only reason for this package.
 
-what should this packages workflow look like now? 
+- traudem can be difficult to install on some OS's, whitebox seems readily available.
 
+- You can accomplish all of this using functions available in the [whitebox]() R package. This is largely a wrapper that more easily allows the use of terra SpatRaster and SpatVector objects for users uncomfortable dealing with file paths or system commands.
 
-not 100% what should be abstracted away here. can take input dem and get a watershed or get input dem and subwatersheds.
+- Really this is just to make a reproducible workflow for implementing SELECT in R.
 
-function1 <- input dem, pour point
-
-d8 -> fa -> streams(?) -> snap pour point -> watershed
-
-```
-make_watershed <- function(dem, pour_point) {
-
-d8 <- wbt("fd8_pointer",
-          dem = dem,
-          output = file.path(tempdir(), "d8.tif"))
-          
-fa <- wbt("",
-          dem = d8)          
-
-}
-
-```

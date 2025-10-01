@@ -88,3 +88,19 @@ check_spat_ras <- function(x,
 }
 
 
+
+return_object <- function(type, x, i = 1,
+                          arg_type = rlang::caller_arg(type),
+                          call = rlang::caller_env()) {
+  if(type == "wbt") {
+    return(x)
+  }
+  if(type == "terra") {
+    x <- whitebox::wbt_result(x, i = i, attribute = "output")
+    return(x)
+  }
+  else {
+    cli::cli_abort("Something went wrong here, sorry this isn't helpful yet! {.arg {arg_type}} is probably incorrect.",
+                   call = call)
+  }
+}
