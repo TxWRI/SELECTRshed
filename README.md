@@ -100,6 +100,18 @@ plot(watershed)
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
+``` r
+## clip d8_pntr and streams to watershed
+
+fdr <- watershed * fdr
+streams_ras <- watershed * streams_ras
+subbasins <- create_subbasins(d8_pntr = fdr,
+                              streams = streams_ras)
+plot(as.factor(subbasins))
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
 ### Other Notes
 
 Why whitebox tools? Watersheding functions are available through the
