@@ -26,3 +26,10 @@ A SpatRaster object
 \description{
 Wrapper for whitebox \code{FillSingleCellPits}. Raises pit cells to the elevation of their lowest neighbor.
 }
+\examples{
+\dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- terra::rast(dem)
+create_single_pit_fill(dem)
+\dontshow{\}) # examplesIf}
+}

@@ -35,3 +35,13 @@ SpatRaster
 \description{
 Identifies the catchments, or sub-basin, draining to each link in a stream network.
 }
+\examples{
+\dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- terra::rast(dem)
+D8pointer <- create_d8_pointer(dem)
+D8fa <- create_d8_fa(D8pointer)
+streams <- create_streams(D8fa)
+create_subbasins(D8pointer, streams)
+\dontshow{\}) # examplesIf}
+}

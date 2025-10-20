@@ -11,7 +11,34 @@
 #'
 #' @return terra SpatVector object.
 #' @export
+#' @examplesIf whitebox::check_whitebox_binary()
+#' ## example data
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
+#' dem <- terra::rast(dem)
+#' gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
+#' pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = terra::crs(dem))
 #'
+#' ## create flow direction and flow accumulation rasters
+#' D8pointer <- create_d8_pointer(dem)
+#' D8fa <- create_d8_fa(D8pointer)
+#'
+#' ## create streams network raster
+#' streams_ras <- create_streams(D8fa)
+#'
+#' ## write pourpoints to temp folder
+#' temp_pour_point_file <- tempfile("snapped", fileext = ".shp")
+#'
+#' ## snap pour points to stream raster network
+#' snapped_pour_point <- snap_pour_point(pour_pts = pourpoint,
+#'                                       streams = streams_ras,
+#'                                       output = temp_pour_point_file)
+#'
+#' ## you probably need a raster of the pour point, you need to call
+#' ## terra::vect since it is a SpatVectorProxy
+#' pour_point_rast <-  terra::rasterize(terra::vect(temp_pour_point_file), streams_ras)
+#'
+#' ## cleanup temp files
+#' unlink(tempdir(), recursive = FALSE)
 snap_pour_point <- function(pour_pts,
                             streams,
                             output = tempfile(fileext = ".shp"),

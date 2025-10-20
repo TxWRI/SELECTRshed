@@ -11,6 +11,13 @@
 #' @param ... optional arguments passed to `whitebox::wbt()`.
 #' @return SpatRaster
 #' @export
+#' @examplesIf whitebox::check_whitebox_binary()
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- terra::rast(dem)
+#' D8pointer <- create_d8_pointer(dem)
+#' D8fa <- create_d8_fa(D8pointer)
+#' streams <- create_streams(D8fa)
+#' create_subbasins(D8pointer, streams)
 
 create_subbasins <- function(d8_pntr,
                              streams,
