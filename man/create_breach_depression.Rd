@@ -8,10 +8,11 @@ create_breach_depression(
   dem,
   output = tempfile(fileext = ".tif"),
   whitebox_wd = NULL,
-  max_depth = NULL,
-  max_length = NULL,
+  max_depth = Inf,
+  max_length = Inf,
   flat_increment = NULL,
-  fill_pits = FALSE
+  fill_pits = FALSE,
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ create_breach_depression(
 \item{flat_increment}{numeric, Optional elevation increment applied to flat areas. Default is \code{NULL}.}
 
 \item{fill_pits}{logical, Optional flag indicating whether to fill single-cell pits. Default is \code{FALSE}}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}}
 }
 \value{
 A SpatRaster object.

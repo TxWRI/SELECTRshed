@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 Delineate watersheds using whitebox tools and terra objects.
-These functions are designed to interact kindly with SELECTRdata and SELECTR.
+These functions are designed to interact kindly with {SELECTRdata} and {SELECTR}. Largely a wrapper around the {whitebox} package.
 
 
 
@@ -121,6 +121,7 @@ streams_ras <- watershed * streams_ras
 subbasins <- create_subbasins(d8_pntr = fdr,
                               streams = streams_ras)
 plot(as.factor(subbasins))
+plot(as.polygons(streams_ras), add = TRUE)
 ```
 
 

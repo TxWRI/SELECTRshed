@@ -25,7 +25,7 @@ create_breach_depression_lc <- function(dem,
                                         output = tempfile(fileext = ".tif"),
                                         dist = 100,
                                         whitebox_wd = NULL,
-                                        max_cost = NULL,
+                                        max_cost = Inf,
                                         min_dist = FALSE,
                                         flat_increment = NULL,
                                         fill = FALSE) {
@@ -45,13 +45,17 @@ create_breach_depression_lc <- function(dem,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
+  opt_args <- rlang::list2()
+  if(!is.null(flat_increment)) {
+    c(opt_args, flat_increment = flat_increment)
+  }
   x <- whitebox::wbt("BreachDepressionsLeastCost",
                      dem = dem,
                      output = output,
                      dist = dist,
                      max_cost = max_cost,
                      min_dist = min_dist,
-                     flat_increment = flat_increment)
+                     opt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
   ## reset whitebox wd
@@ -76,7 +80,7 @@ create_breach_depression_lc <- function(dem,
 #' @param max_length numeric, Optional maximum breach channel length (in grid cells; default is `Inf`).
 #' @param flat_increment numeric, Optional elevation increment applied to flat areas. Default is `NULL`.
 #' @param fill_pits logical, Optional flag indicating whether to fill single-cell pits. Default is `FALSE`
-#'
+#' @param ... optional arguments passed to `whitebox::wbt()`
 #'
 #' @return A SpatRaster object.
 #' @export
@@ -88,10 +92,11 @@ create_breach_depression_lc <- function(dem,
 create_breach_depression <- function(dem,
                                      output = tempfile(fileext = ".tif"),
                                      whitebox_wd = NULL,
-                                     max_depth = NULL,
-                                     max_length = NULL,
+                                     max_depth = Inf,
+                                     max_length = Inf,
                                      flat_increment = NULL,
-                                     fill_pits = FALSE) {
+                                     fill_pits = FALSE,
+                                     ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -108,15 +113,26 @@ create_breach_depression <- function(dem,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  x <- whitebox::wbt("BreachDepressions",
-                     dem = dem,
-                     output = output,
-                     max_depth = max_depth,
-                     max_length = max_length,
-                     flat_increment = flat_increment,
-                     fill_pits = fill_pits)
+
+  opt_args <- rlang::list2(...)
+  if(!is.null(flat_increment)) {
+    c(opt_args, flat_increment = flat_increment)
+  }
+  if(fill_pits) {
+    c(opt_args, fill_pits = fill_pits)
+  }
+
+  wbt_args <- rlang::list2("BreachDepressions",
+                           dem = dem,
+                           output = output,
+                           max_depth = max_depth,
+                           max_length = max_length,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
+
   ## reset whitebox wd
   if(is.null(whitebox_wd)) {
     whitebox::wbt_wd("")

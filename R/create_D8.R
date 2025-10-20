@@ -15,7 +15,7 @@
 #' # example code
 #' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
 #' dem <- terra::rast(dem)
-#' create_D8_pointer(dem)
+#' create_d8_pointer(dem)
 #'
 
 create_d8_pointer <- function(dem,
@@ -86,11 +86,11 @@ create_d8_pointer <- function(dem,
 #' # example code
 #' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
 #' dem <- terra::rast(dem)
-#' D8pointer <- create_D8_pointer(dem)
-#' create_D8_fa(D8pointer)
+#' D8pointer <- create_d8_pointer(dem)
+#' create_d8_fa(D8pointer)
 #'
 
-create_D8_fa <- function(D8pointer,
+create_d8_fa <- function(D8pointer,
                          output = tempfile(fileext = ".tif"),
                          whitebox_wd = NULL,
                          out_type = "cells",

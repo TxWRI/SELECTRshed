@@ -9,7 +9,7 @@ create_breach_depression_lc(
   output = tempfile(fileext = ".tif"),
   dist = 100,
   whitebox_wd = NULL,
-  max_cost = NULL,
+  max_cost = Inf,
   min_dist = FALSE,
   flat_increment = NULL,
   fill = FALSE

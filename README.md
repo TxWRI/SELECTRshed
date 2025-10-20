@@ -9,7 +9,8 @@
 <!-- badges: end -->
 
 Delineate watersheds using whitebox tools and terra objects. These
-functions are designed to interact kindly with SELECTRdata and SELECTR.
+functions are designed to interact kindly with {SELECTRdata} and
+{SELECTR}. Largely a wrapper around the {whitebox} package.
 
 ## Installation
 
@@ -43,7 +44,7 @@ library(SELECTRshed)
 #> Loading required package: whitebox
 library(terra)
 #> Warning: package 'terra' was built under R version 4.3.3
-#> terra 1.8.10
+#> terra 1.8.29
 
 
 gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
@@ -62,9 +63,6 @@ delineations, this step isn’t necessary, but included anyways.
 ``` r
 ## breach depressions in the dem
 breached <- create_breach_depression(dem)
-#> argument type (NULL) is not supported at this time
-#> argument type (NULL) is not supported at this time
-#> argument type (NULL) is not supported at this time
 ## create the flow direction raster
 fdr <- create_d8_pointer(breached)
 ## create teh flow accumulation raster
@@ -108,6 +106,7 @@ streams_ras <- watershed * streams_ras
 subbasins <- create_subbasins(d8_pntr = fdr,
                               streams = streams_ras)
 plot(as.factor(subbasins))
+plot(as.polygons(streams_ras), add = TRUE)
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />

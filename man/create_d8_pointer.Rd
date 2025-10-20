@@ -33,6 +33,6 @@ objects or a file path to common raster files.
 # example code
 dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
 dem <- terra::rast(dem)
-create_D8_pointer(dem)
+create_d8_pointer(dem)
 \dontshow{\}) # examplesIf}
 }
