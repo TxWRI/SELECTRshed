@@ -17,7 +17,7 @@
 #'
 #' @return A SpatRaster object.
 #' @export
-#' @examples
+#' @examplesIf whitebox::check_whitebox_binary()
 #' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
 #' dem <- terra::rast(dem)
 #' create_breach_depression_lc(dem, dist = 10)
@@ -86,7 +86,7 @@ create_breach_depression_lc <- function(dem,
 #'
 #' @return A SpatRaster object.
 #' @export
-#' @examples
+#' @examplesIf whitebox::check_whitebox_binary()
 #' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
 #' dem <- terra::rast(dem)
 #' create_breach_depression(dem)
