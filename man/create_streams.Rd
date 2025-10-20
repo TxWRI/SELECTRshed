@@ -9,7 +9,8 @@ create_streams(
   output = tempfile(fileext = ".tif"),
   whitebox_wd = NULL,
   threshold = 1000,
-  zero_background = FALSE
+  zero_background = FALSE,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ create_streams(
 \item{threshold}{Numeric value indicating the threshold in flow accumulation values (number of cells) for channelization.}
 
 \item{zero_background}{logical, Flag indicating whether a background value of zero should be used.}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}.}
 }
 \value{
 A SpatRaster object.

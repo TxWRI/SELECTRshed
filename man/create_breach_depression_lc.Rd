@@ -12,7 +12,8 @@ create_breach_depression_lc(
   max_cost = Inf,
   min_dist = FALSE,
   flat_increment = NULL,
-  fill = FALSE
+  fill = FALSE,
+  ...
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ create_breach_depression_lc(
 \item{flat_increment}{Optional elevation increment applied to flat areas. Default is \code{NULL}.}
 
 \item{fill}{logical, Optional flag indicating whether to fill any remaining unbreached depressions. Default is \code{FALSE}}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}}
 }
 \value{
 A SpatRaster object.

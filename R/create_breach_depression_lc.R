@@ -12,6 +12,7 @@
 #' @param min_dist logical, Optional flag indicating whether to minimize breach distances. Default is `FALSE`.
 #' @param flat_increment Optional elevation increment applied to flat areas. Default is `NULL`.
 #' @param fill logical, Optional flag indicating whether to fill any remaining unbreached depressions. Default is `FALSE`
+#' @param ... optional arguments passed to `whitebox::wbt()`
 #'
 #'
 #' @return A SpatRaster object.
@@ -28,7 +29,8 @@ create_breach_depression_lc <- function(dem,
                                         max_cost = Inf,
                                         min_dist = FALSE,
                                         flat_increment = NULL,
-                                        fill = FALSE) {
+                                        fill = FALSE,
+                                        ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -45,7 +47,7 @@ create_breach_depression_lc <- function(dem,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  opt_args <- rlang::list2()
+  opt_args <- rlang::list2(...)
   if(!is.null(flat_increment)) {
     c(opt_args, flat_increment = flat_increment)
   }
@@ -55,7 +57,7 @@ create_breach_depression_lc <- function(dem,
                      dist = dist,
                      max_cost = max_cost,
                      min_dist = min_dist,
-                     opt_args)
+                     !!! opt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
   ## reset whitebox wd

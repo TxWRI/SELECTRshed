@@ -8,7 +8,8 @@ create_d8_pointer(
   dem,
   output = tempfile(fileext = ".tif"),
   whitebox_wd = NULL,
-  esri_pntr = FALSE
+  esri_pntr = FALSE,
+  ...
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ create_d8_pointer(
 \item{whitebox_wd}{valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.}
 
 \item{esri_pntr}{logical, D8 pointer uses the ESRI style scheme.}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}}
 }
 \value{
 a SpatRaster object.

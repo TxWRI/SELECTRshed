@@ -10,7 +10,8 @@ create_streams_vector(
   output = tempfile(fileext = ".shp"),
   whitebox_wd = NULL,
   esri_pntr = FALSE,
-  all_vertices = FALSE
+  all_vertices = FALSE,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ create_streams_vector(
 \item{esri_pntr}{logical, D8 pointer uses the ESRI style scheme.}
 
 \item{all_vertices}{logical, Do you want to preserve all vertices in output (i.e. no straight-line generalization).}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}}
 }
 \value{
 A terra SpatVector object

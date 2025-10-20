@@ -10,6 +10,7 @@
 #' @param fix_flats logical, indicating whether flat areas should have a small gradient applied. Defaults to `TRUE`.
 #' @param flat_increment Optional elevation increment applied to flat areas. Defaults to `NULL`.
 #' @param max_depth Optional maximum depression depth to fill. Defaults to `NULL`.
+#' @param ... optional arguments passed to `whitebox::wbt()`
 #'
 #' @return A SpatRaster object.
 #' @export
@@ -25,7 +26,8 @@ create_fill_depressions <- function(dem,
                                     whitebox_wd = NULL,
                                     fix_flats = TRUE,
                                     flat_increment = NULL,
-                                    max_depth = NULL) {
+                                    max_depth = NULL,
+                                    ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -41,13 +43,18 @@ create_fill_depressions <- function(dem,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  ## run wbt
-  x <- whitebox::wbt("fill_depressions",
-                dem = dem,
-                output = output,
-                fix_flats = fix_flats,
-                flat_increment = flat_increment,
-                max_depth = max_depth)
+
+  opt_args <- rlang::list2(...)
+
+  wbt_args <- rlang::list2("FillDepressions",
+                           dem = dem,
+                           output = output,
+                           fix_flats = fix_flats,
+                           flat_increment = flat_increment,
+                           max_depth = max_depth,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 

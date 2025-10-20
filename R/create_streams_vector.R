@@ -11,6 +11,7 @@
 #' @param whitebox_wd valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.
 #' @param esri_pntr logical, D8 pointer uses the ESRI style scheme.
 #' @param all_vertices logical, Do you want to preserve all vertices in output (i.e. no straight-line generalization).
+#' @param ... optional arguments passed to `whitebox::wbt()`
 #'
 #' @return A terra SpatVector object
 #' @export
@@ -28,7 +29,8 @@ create_streams_vector <- function(streams,
                                   output = tempfile(fileext = ".shp"),
                                   whitebox_wd = NULL,
                                   esri_pntr = FALSE,
-                                  all_vertices = FALSE) {
+                                  all_vertices = FALSE,
+                                  ...) {
 
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
@@ -46,12 +48,17 @@ create_streams_vector <- function(streams,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  x <- whitebox::wbt("RasterStreamsToVector",
-                streams = streams,
-                d8_pntr = d8_pointer,
-                output = output,
-                esri_pntr = esri_pntr,
-                all_vertices = all_vertices)
+  opt_args <- rlang::list2(...)
+
+  wbt_args <- rlang::list2("RasterStreamsToVector",
+                           streams = streams,
+                           d8_pntr = d8_pointer,
+                           output = output,
+                           esri_pntr = esri_pntr,
+                           all_vertices = all_vertices,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 

@@ -10,7 +10,8 @@ snap_pour_point(
   output = tempfile(fileext = ".shp"),
   whitebox_wd = NULL,
   snap_dist = 90,
-  type = "terra"
+  type = "terra",
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ snap_pour_point(
 \item{snap_dist}{Maximum snap distance in map units.}
 
 \item{type}{character, one of \code{"terra"} or \code{"wbt"}. If \code{type = "terra"}, returns an object of SpatVector. If \code{type = "wbt"}, a wbt_result object is returned.}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}.}
 }
 \value{
 terra SpatVector object.

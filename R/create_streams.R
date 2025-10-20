@@ -10,6 +10,7 @@
 #' @param whitebox_wd valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.
 #' @param threshold Numeric value indicating the threshold in flow accumulation values (number of cells) for channelization.
 #' @param zero_background logical, Flag indicating whether a background value of zero should be used.
+#' @param ... optional arguments passed to `whitebox::wbt()`.
 #'
 #' @return A SpatRaster object.
 #' @export
@@ -25,7 +26,8 @@ create_streams <- function(flow_accumulation,
                            output = tempfile(fileext = ".tif"),
                            whitebox_wd = NULL,
                            threshold = 1000,
-                           zero_background = FALSE) {
+                           zero_background = FALSE,
+                           ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -42,11 +44,16 @@ create_streams <- function(flow_accumulation,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  x <- whitebox::wbt("ExtractStreams",
-                flow_accum = flow_accumulation,
-                output = output,
-                threshold = threshold,
-                zero_background = zero_background)
+  opt_args <- rlang::list2(...)
+
+  wbt_args <- rlang::list2("ExtractStreams",
+                           flow_accum = flow_accumulation,
+                           output = output,
+                           threshold = threshold,
+                           zero_background = zero_background,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
