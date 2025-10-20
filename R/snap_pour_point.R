@@ -7,6 +7,7 @@
 #' @param whitebox_wd valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.
 #' @param snap_dist Maximum snap distance in map units.
 #' @param type character, one of `"terra"` or `"wbt"`. If `type = "terra"`, returns an object of SpatVector. If `type = "wbt"`, a wbt_result object is returned.
+#' @param ... optional arguments passed to `whitebox::wbt()`.
 #'
 #' @return terra SpatVector object.
 #' @export
@@ -16,7 +17,8 @@ snap_pour_point <- function(pour_pts,
                             output = tempfile(fileext = ".shp"),
                             whitebox_wd = NULL,
                             snap_dist = 90,
-                            type = "terra") {
+                            type = "terra",
+                            ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -41,12 +43,16 @@ snap_pour_point <- function(pour_pts,
     ## else we can point to whatever directory the user wants {whitebox} generated files to be written
     whitebox::wbt_wd(wd = whitebox_wd)
   }
+  opt_args <- rlang::list2(...)
 
-  x <- whitebox::wbt("JensonSnapPourPoints",
-                     pour_pts = whitebox::wbt_source(pour_pts, force = TRUE),
-                     streams = streams,
-                     output = output,
-                     snap_dist = snap_dist)
+  wbt_args <- rlang::list2("JensonSnapPourPoints",
+                           pour_pts = whitebox::wbt_source(pour_pts, force = TRUE),
+                           streams = streams,
+                           output = output,
+                           snap_dist = snap_dist,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 

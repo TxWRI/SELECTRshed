@@ -8,6 +8,7 @@
 #' @param esri_pntr D8 pointer uses the ESRI style scheme.
 #' @param whitebox_wd valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.
 #' @param type character, one of `"terra"` or `"wbt"`. If `type = "terra"`, returns an object of SpatVector. If `type = "wbt"`, a wbt_result object is returned.
+#' @param ... optional arguments passed to `whitebox::wbt()`.
 #'
 #' @return A SpatRaster or wbt_result object.
 #' @export
@@ -17,7 +18,8 @@ create_watershed <- function(d8_pntr,
                              output = tempfile(fileext = ".tif"),
                              esri_pntr = FALSE,
                              whitebox_wd = NULL,
-                             type = "terra") {
+                             type = "terra",
+                             ...) {
   ## need to check whitebox tools is installed
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
@@ -44,11 +46,16 @@ create_watershed <- function(d8_pntr,
     whitebox::wbt_wd(wd = whitebox_wd)
   }
 
-  x <- whitebox::wbt("Watershed",
-                     d8_pntr = d8_pntr,
-                     pour_pts = pour_pts,
-                     output = output,
-                     esri_pntr = esri_pntr)
+  opt_args <- rlang::list2(...)
+
+  wbt_args <- rlang::list2("Watershed",
+                           d8_pntr = d8_pntr,
+                           pour_pts = pour_pts,
+                           output = output,
+                           esri_pntr = esri_pntr,
+                           !!! opt_args)
+
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
 
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 

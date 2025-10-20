@@ -33,7 +33,7 @@ create_d8_fa(
 
 \item{esri_pntr}{Input D8 pointer uses the ESRI style scheme.}
 
-\item{...}{additional arguments used by \code{whitebox::wbt()}}
+\item{...}{optional arguments passed to \code{whitebox::wbt()}.}
 }
 \value{
 A SpatRaster object.

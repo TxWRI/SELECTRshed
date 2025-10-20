@@ -10,7 +10,8 @@ create_fill_depressions(
   whitebox_wd = NULL,
   fix_flats = TRUE,
   flat_increment = NULL,
-  max_depth = NULL
+  max_depth = NULL,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ create_fill_depressions(
 \item{flat_increment}{Optional elevation increment applied to flat areas. Defaults to \code{NULL}.}
 
 \item{max_depth}{Optional maximum depression depth to fill. Defaults to \code{NULL}.}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}}
 }
 \value{
 A SpatRaster object.

@@ -10,7 +10,8 @@ create_watershed(
   output = tempfile(fileext = ".tif"),
   esri_pntr = FALSE,
   whitebox_wd = NULL,
-  type = "terra"
+  type = "terra",
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ create_watershed(
 \item{whitebox_wd}{valid working directory for whitebox to store temporary rasters. Defaults to NULL which stores in a temporary space that is deleted when the user session is over. You can use this to store rasters before they are processed into terra::rast objects. Otherwise it is suggested to leave this NULL and store the rasters using the output argument.}
 
 \item{type}{character, one of \code{"terra"} or \code{"wbt"}. If \code{type = "terra"}, returns an object of SpatVector. If \code{type = "wbt"}, a wbt_result object is returned.}
+
+\item{...}{optional arguments passed to \code{whitebox::wbt()}.}
 }
 \value{
 A SpatRaster or wbt_result object.
