@@ -22,16 +22,7 @@ create_single_pit_fill <- function(dem,
     rlang::abort()
   }
 
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
-
+  check_whitebox_wd(whitebox_wd)
 
   opt_args <- rlang::list2(...)
 
@@ -45,9 +36,7 @@ create_single_pit_fill <- function(dem,
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   ## return terra rast object
   return(x)

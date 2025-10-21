@@ -30,26 +30,16 @@ create_subbasins <- function(d8_pntr,
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
   }
-  ## check args
-  # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
-  # output should be valid file path
+
   check_spat_ras(d8_pntr)
   check_spat_ras(streams)
   check_logical(esri_pntr)
+  check_whitebox_wd(whitebox_wd)
+  ## need function to check "type" argument is one of "terra" or "wbt", might actually be checked by whitebox.
 
   ## check CRS
   if(isFALSE(terra::same.crs(d8_pntr, streams))) {
     cli::cli_abort("coordinate reference systems don't match!")
-  }
-
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
   }
 
   opt_args <- rlang::list2(...)
@@ -66,9 +56,7 @@ create_subbasins <- function(d8_pntr,
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   ## return terra rast object
   return(x)

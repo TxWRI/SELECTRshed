@@ -53,23 +53,16 @@ snap_pour_point <- function(pour_pts,
   ## check args
   # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
   # output should be valid file path
+  check_spat_vect(pour_pts)
   check_spat_ras(streams)
-  ## need to check SpatVect pourpts
+  check_numeric(snap_dist)
+  check_whitebox_wd(whitebox_wd)
 
-  ## check CRS and project the vector if needed.
+    ## check CRS and project the vector if needed.
   if(isFALSE(terra::same.crs(pour_pts, streams))) {
     cli::cli_abort("coordinate reference systems don't match!")
   }
 
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
   opt_args <- rlang::list2(...)
 
   wbt_args <- rlang::list2("JensonSnapPourPoints",
@@ -84,9 +77,7 @@ snap_pour_point <- function(pour_pts,
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   ## return terra vector object
   return(x)
