@@ -113,3 +113,23 @@ return_object <- function(type, x, i = 1,
                    call = call)
   }
 }
+
+
+check_whitebox_wd <- function(x) {
+  if(is.null(x)) {
+    ## this prevents temp {whitebox} files being written to the project directory by default
+    whitebox::wbt_wd(wd = tempdir())
+  }
+  if(!is.null(x)) {
+    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
+    whitebox::wbt_wd(wd = x)
+  }
+
+}
+
+reset_whitebox_wd <- function(x) {
+  ## reset whitebox wd
+  if(is.null(x)) {
+    whitebox::wbt_wd("")
+  }
+}

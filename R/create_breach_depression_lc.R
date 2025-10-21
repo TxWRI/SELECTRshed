@@ -18,7 +18,7 @@
 #' @return A SpatRaster object.
 #' @export
 #' @examplesIf whitebox::check_whitebox_binary()
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' create_breach_depression_lc(dem, dist = 10)
 #'
@@ -36,34 +36,31 @@ create_breach_depression_lc <- function(dem,
     rlang::abort()
   }
 
-  ## can write a function for this check since we use it everytime....
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
+  check_numeric(dist)
+  check_numeric(max_cost)
+  check_logical(min_dist)
+  check_logical(fill)
+  check_whitebox_wd(whitebox_wd)
+
 
   opt_args <- rlang::list2(...)
   if(!is.null(flat_increment)) {
+    check_numeric(flat_increment)
     c(opt_args, flat_increment = flat_increment)
   }
-  x <- whitebox::wbt("BreachDepressionsLeastCost",
-                     dem = dem,
-                     output = output,
-                     dist = dist,
-                     max_cost = max_cost,
-                     min_dist = min_dist,
-                     !!! opt_args)
 
+  wbt_args <- rlang::list2("BreachDepressionsLeastCost",
+                           dem = dem,
+                           output = output,
+                           dist = dist,
+                           max_cost = max_cost,
+                           min_dist = min_dist,
+                           !!! opt_args)
+  x <- rlang::exec(whitebox::wbt, !!!wbt_args)
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
+
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   ## return terra rast object
   return(x)
@@ -104,20 +101,15 @@ create_breach_depression <- function(dem,
     rlang::abort()
   }
 
-  ## can write a function for this check since we use it everytime....
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
+  check_numeric(max_depth)
+  check_numeric(max_length)
+  check_logical(fill_pits)
+  check_whitebox_wd(whitebox_wd)
 
 
   opt_args <- rlang::list2(...)
   if(!is.null(flat_increment)) {
+    check_numeric(flat_increment)
     c(opt_args, flat_increment = flat_increment)
   }
   if(fill_pits) {
@@ -136,9 +128,7 @@ create_breach_depression <- function(dem,
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   ## return terra rast object
   return(x)

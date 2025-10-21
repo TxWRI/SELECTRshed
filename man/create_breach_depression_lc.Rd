@@ -45,7 +45,7 @@ objects or a file path to common raster files.
 }
 \examples{
 \dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 dem <- terra::rast(dem)
 create_breach_depression_lc(dem, dist = 10)
 \dontshow{\}) # examplesIf}

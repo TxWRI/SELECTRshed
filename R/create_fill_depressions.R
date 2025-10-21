@@ -33,25 +33,25 @@ create_fill_depressions <- function(dem,
     rlang::abort()
   }
 
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
+  check_logical(fix_flats)
+  check_whitebox_wd(whitebox_wd)
+
 
 
   opt_args <- rlang::list2(...)
+  if(!is.null(flat_increment)) {
+    check_numeric(flat_increment)
+    c(opt_args, flat_increment = flat_increment)
+  }
+  if(!is.null(max_depth)) {
+    check_numeric(max_depth)
+    c(opt_args, max_depth = max_depth)
+  }
 
   wbt_args <- rlang::list2("FillDepressions",
                            dem = dem,
                            output = output,
                            fix_flats = fix_flats,
-                           flat_increment = flat_increment,
-                           max_depth = max_depth,
                            !!! opt_args)
 
   x <- rlang::exec(whitebox::wbt, !!!wbt_args)
@@ -59,9 +59,7 @@ create_fill_depressions <- function(dem,
   x <- whitebox::wbt_result(x, i = 1, attribute = "output")
 
   ## reset whitebox wd
-  if(is.null(whitebox_wd)) {
-    whitebox::wbt_wd("")
-  }
+  reset_whitebox_wd(whitebox_wd)
 
   return(x)
 
