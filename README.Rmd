@@ -9,7 +9,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  dpi = 200
 )
 ```
 
@@ -21,16 +22,6 @@ knitr::opts_chunk$set(
 
 Delineate watersheds using whitebox tools and terra objects.
 These functions are designed to interact kindly with {SELECTRdata} and {SELECTR}. Largely a wrapper around the {whitebox} package.
-
-
-
-## Installation
-
-You can install the development version of SELECTRshed like so:
-
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
-```
 
 
 
@@ -49,11 +40,36 @@ Pseudo-workflow goes like this:
 
 7 - Snap the vector pour point to the stream raster.
 8 - Rasterize the snapped vector pour point.
-9 - Delineate with flow direction raster and pour point raster.
+9 - Delineate the watershed with flow direction raster and pour point raster.
 
-tbd: subbasins
-
+10 - Clip flow direction and stream rasters with the watershed.
+11 - Create subbasin using the clipped streams and flow direction rasters.
 ```
+
+## Example workflow
+
+This example walks through using a DEM and vector pour point to delineate 
+a watershed and delineate subbasins. This package requires the [whitebox](https://whiteboxr.gishub.org/)
+R package and the [Whitebox Tools Open Core](https://www.whiteboxgeo.com/)
+binary package.
+
+### Installing
+
+Install whitebox from CRAN and then install the Whitebox Tools binary. 
+whitebox provides methods for installing the binaries on Windows, Linux, and Mac.
+
+```r
+install.packages("whitebox")
+whitebox::install_whitebox()
+```
+
+Install SELECTRshed:
+
+```r
+pak::pkg_install("TxWRI/SELECTRshed")
+```
+
+Currently only available as source through GitHub, prebuilt binaries will be available through r-universe soon.
 
 ```{r}
 library(SELECTRdata)
@@ -69,19 +85,28 @@ plot(dem)
 plot(pourpoint, add = TRUE)
 ```
 
+### Process the DEM
 
-Since this DEM is already filled, breached, and hydroenforced for NHD delineations, this step isn't necessary, but included anyways.
+The general workflow for watershed delineation includes
+
+- preprocess the DEM, using fill and/or breach depressions tools
+- create a flow direction raster from the preprocessed DEM
+- create a flow accumulation raster from the flow direction raster
+- create a stream raster from the flow accumulaiton raster based on the number of upstream cells.
+- snap the outlet point to the stream network created by the stream raster
+- create the watershed using the snapped pour point and flow direction raster
+
 
 ```{r}
-## breach depressions in the dem
+## preprocess the DEM
 breached <- create_breach_depression(dem)
 ## create the flow direction raster
 fdr <- create_d8_pointer(breached)
-## create teh flow accumulation raster
-fa <- create_D8_fa(fdr)
+## create the flow accumulation raster
+fa <- create_d8_fa(fdr)
 ## create the streams raster
 streams_ras <- create_streams(fa, threshold = 10000)
-plot(streams_ras, col = map.pal("viridis", 1))
+
 ```
 
 
@@ -91,33 +116,30 @@ temp_pour_point_file <- paste0(tempdir(), "snapped.shp")
 snapped_pour_point <- snap_pour_point(pour_pts = pourpoint,
                                       streams = streams_ras,
                                       output = temp_pour_point_file)
-
-## the spatvectorproxy points to wrong file, might be a os path issue.
+## snapped_pour_point returns a SpatVectorProxy, we need a SpatVector
+## so use vect() on the output.
 snapped_pour_point <- vect(temp_pour_point_file)
-```
 
-
-```{r}
-
+## convert to Spatraster
 pour_point_rast <-  rasterize(snapped_pour_point, streams_ras)
 
-```
-
-
-
-```{r}
+## create the watershed
 watershed <- create_watershed(d8_pntr = fdr, 
                               pour_pts = pour_point_rast)
 plot(watershed)
 ```
 
 
+### Create Subbasins
+
 
 ```{r}
 ## clip d8_pntr and streams to watershed
-
 fdr <- watershed * fdr
 streams_ras <- watershed * streams_ras
+
+## create subbasins will create subwatersheds at the
+## nodes of stream segments
 subbasins <- create_subbasins(d8_pntr = fdr,
                               streams = streams_ras)
 plot(as.factor(subbasins))
@@ -133,7 +155,7 @@ Why whitebox tools? Watersheding functions are available through the terra and t
 
 - traudem can be difficult to install on some OS's, whitebox seems readily available.
 
-- You can accomplish all of this using functions available in the [whitebox]() R package. This is largely a wrapper that more easily allows the use of terra SpatRaster and SpatVector objects for users uncomfortable dealing with file paths or system commands.
+- You can accomplish all of this using functions available in the [whitebox](https://whiteboxr.gishub.org/) R package. This is largely a wrapper that more easily allows the use of terra SpatRaster and SpatVector objects for users uncomfortable dealing with file paths or system commands.
 
 - Really this is just to make a reproducible workflow for implementing SELECT in R.
 
