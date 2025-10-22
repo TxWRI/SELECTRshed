@@ -76,11 +76,25 @@ library(SELECTRdata)
 library(SELECTRshed)
 library(terra)
 
+## download a DEM using a bounding box from an area we
+## are interested in using WGS84 EPSG:4326
 
-gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
-dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
-dem <- terra::rast(dem)
-pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = crs(dem))
+xmin <- -96.596260
+ymin <- 30.578519 
+xmax <- -96.348038
+ymax <- 30.801423
+bbox_extent <- ext(xmin, xmax, ymin, ymax)
+bbox_polygon <- as.polygons(bbox_extent, crs = "EPSG:4326")
+
+dem <- download_dem(bbox_polygon)
+
+## create a pourpoint near the exit of Thompson's Creek -96.423011 30.588226
+pourpoint <- vect(data.frame(id = "Thompsons",
+                             lon = -96.423011,
+                             lat = 30.588226),
+                  geom = c("lon", "lat"),
+                  crs = "EPSG:4326")
+
 plot(dem)
 plot(pourpoint, add = TRUE)
 ```
@@ -99,13 +113,13 @@ The general workflow for watershed delineation includes
 
 ```{r}
 ## preprocess the DEM
-breached <- create_breach_depression(dem)
+breached <- create_breach_depression(dem, fill_pits = TRUE)
 ## create the flow direction raster
 fdr <- create_d8_pointer(breached)
 ## create the flow accumulation raster
 fa <- create_d8_fa(fdr)
 ## create the streams raster
-streams_ras <- create_streams(fa, threshold = 10000)
+streams_ras <- create_streams(fa, threshold = 1500)
 
 ```
 
