@@ -133,3 +133,14 @@ reset_whitebox_wd <- function(x) {
     whitebox::wbt_wd("")
   }
 }
+
+
+whitebox_bin <- function() {
+
+  ## need to check whitebox tools is installed
+  if(!whitebox::check_whitebox_binary()) {
+    cli::cli_abort("Please install whitebox using {.code `whitebox::install_whitebox()`}")
+  }
+
+}
+

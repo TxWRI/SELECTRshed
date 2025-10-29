@@ -95,11 +95,7 @@ create_d8_fa <- function(D8pointer,
                          esri_pntr = FALSE,
                          ...) {
 
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(D8pointer)
   ## check the output type
   check_out_type(out_type, arg = "out_type")

@@ -28,11 +28,7 @@ create_streams <- function(flow_accumulation,
                            threshold = 1000,
                            zero_background = FALSE,
                            ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(flow_accumulation)
   check_numeric(threshold)
   check_logical(zero_background)

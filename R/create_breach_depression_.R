@@ -31,11 +31,7 @@ create_breach_depression_lc <- function(dem,
                                         flat_increment = NULL,
                                         fill = FALSE,
                                         ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(dem)
   check_numeric(dist)
   check_numeric(max_cost)
@@ -97,11 +93,7 @@ create_breach_depression <- function(dem,
                                      flat_increment = NULL,
                                      fill_pits = FALSE,
                                      ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(dem)
   check_numeric(max_depth)
   check_numeric(max_length)
