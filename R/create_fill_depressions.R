@@ -33,6 +33,7 @@ create_fill_depressions <- function(dem,
     rlang::abort()
   }
 
+  check_spat_ras(dem)
   check_logical(fix_flats)
   check_whitebox_wd(whitebox_wd)
 

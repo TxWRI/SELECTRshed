@@ -1,9 +1,11 @@
 test_that("create_breach_depression_lc returns expected types", {
+  testthat::skip_on_cran()
   dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   breached <- create_breach_depression_lc(dem, dist = 10)
   testthat::expect_type(breached, "S4")
   testthat::expect_s4_class(breached, "SpatRaster")
+  testthat::expect_error(create_breach_depression_lc(terra::vect(system.file("ex/lux.shp", package="terra"))))
   testthat::expect_error(create_breach_depression_lc(dem, dist = "100"))
   testthat::expect_error(create_breach_depression_lc(dem, dist = 100, max_cost = "100"))
   testthat::expect_error(create_breach_depression_lc(dem, dist = 100, min_dist = 1))
@@ -12,11 +14,13 @@ test_that("create_breach_depression_lc returns expected types", {
 
 
 test_that("create_breach_depression returns expected types", {
+  testthat::skip_on_cran()
   dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   breached <- create_breach_depression(dem)
   testthat::expect_type(breached, "S4")
   testthat::expect_s4_class(breached, "SpatRaster")
+  testthat::expect_error(create_breach_depression(terra::vect(system.file("ex/lux.shp", package="terra"))))
   testthat::expect_error(create_breach_depression(dem, max_depth = "100"))
   testthat::expect_error(create_breach_depression(dem, dist = 100, max_length = "100"))
   testthat::expect_error(create_breach_depression(dem, dist = 100, fill_pits = "yes"))

@@ -42,13 +42,12 @@ create_watershed <- function(d8_pntr,
   if(!whitebox::check_whitebox_binary()) {
     rlang::abort()
   }
-  ## check args
-  # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
-  # output should be valid file path
+
   check_spat_ras(d8_pntr)
   check_spat_ras(pour_pts)
   check_logical(esri_pntr)
   check_whitebox_wd(whitebox_wd)
+  check_wbt_type(type)
 
   ## check CRS
   if(isFALSE(terra::same.crs(d8_pntr, pour_pts))) {

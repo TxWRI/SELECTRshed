@@ -36,6 +36,7 @@ create_breach_depression_lc <- function(dem,
     rlang::abort()
   }
 
+  check_spat_ras(dem)
   check_numeric(dist)
   check_numeric(max_cost)
   check_logical(min_dist)
@@ -101,6 +102,7 @@ create_breach_depression <- function(dem,
     rlang::abort()
   }
 
+  check_spat_ras(dem)
   check_numeric(max_depth)
   check_numeric(max_length)
   check_logical(fill_pits)

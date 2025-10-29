@@ -22,6 +22,7 @@ create_single_pit_fill <- function(dem,
     rlang::abort()
   }
 
+  check_spat_ras(dem)
   check_whitebox_wd(whitebox_wd)
 
   opt_args <- rlang::list2(...)

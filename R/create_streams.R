@@ -33,16 +33,11 @@ create_streams <- function(flow_accumulation,
     rlang::abort()
   }
 
-  ## can write a function for this check since we use it everytime....
-  ## set whitebox working directory
-  if(is.null(whitebox_wd)) {
-    ## this prevents temp {whitebox} files being written to the project directory by default
-    whitebox::wbt_wd(wd = tempdir())
-  }
-  if(!is.null(whitebox_wd)) {
-    ## else we can point to whatever directory the user wants {whitebox} generated files to be written
-    whitebox::wbt_wd(wd = whitebox_wd)
-  }
+  check_spat_ras(flow_accumulation)
+  check_numeric(threshold)
+  check_logical(zero_background)
+  check_whitebox_wd(whitebox_wd)
+
 
   opt_args <- rlang::list2(...)
 
