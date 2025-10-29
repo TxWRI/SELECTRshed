@@ -1,5 +1,6 @@
 test_that("create_streams_ returns expected types", {
   testthat::skip_on_cran()
+  testthat::skip_if_not(whitebox::check_whitebox_binary(), "whitebox binary not installed")
   dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   D8pointer <- create_d8_pointer(dem)
