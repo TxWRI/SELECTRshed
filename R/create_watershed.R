@@ -13,7 +13,7 @@
 #' @return A SpatRaster or wbt_result object.
 #' @export
 #' @examplesIf whitebox::check_whitebox_binary()
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
 #' pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = terra::crs(dem))

@@ -41,7 +41,7 @@ terra SpatRaster objects or a file path to common raster files.
 \examples{
 \dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # example code
-dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 dem <- terra::rast(dem)
 D8pointer <- create_d8_pointer(dem)
 D8fa <- create_d8_fa(D8pointer)

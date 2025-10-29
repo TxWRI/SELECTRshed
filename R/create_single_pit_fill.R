@@ -10,7 +10,7 @@
 #' @return A SpatRaster object
 #' @export
 #' @examplesIf whitebox::check_whitebox_binary()
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' create_single_pit_fill(dem)
 create_single_pit_fill <- function(dem,

@@ -40,7 +40,7 @@ Breaches all of the depressions in a DEM using Lindsay's (2016) algorithm. This 
 }
 \examples{
 \dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 dem <- terra::rast(dem)
 create_breach_depression(dem)
 \dontshow{\}) # examplesIf}

@@ -17,7 +17,7 @@
 #'
 #' @examplesIf whitebox::check_whitebox_binary()
 #' # example code
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' create_fill_depressions(dem)
 #'
