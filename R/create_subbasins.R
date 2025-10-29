@@ -35,7 +35,7 @@ create_subbasins <- function(d8_pntr,
   check_spat_ras(streams)
   check_logical(esri_pntr)
   check_whitebox_wd(whitebox_wd)
-  ## need function to check "type" argument is one of "terra" or "wbt", might actually be checked by whitebox.
+  check_wbt_type(type)
 
   ## check CRS
   if(isFALSE(terra::same.crs(d8_pntr, streams))) {
@@ -60,4 +60,14 @@ create_subbasins <- function(d8_pntr,
 
   ## return terra rast object
   return(x)
+}
+
+
+check_wbt_type <- function(x,
+                           arg = rlang::caller_arg(x),
+                           call = rlang::caller_env()) {
+  if (!x %in% c("terra", "wbt")) {
+    cli::cli_abort("{.arg {arg}} must be one of `c('terra', 'wbt')`.",
+                   call = call)
+  }
 }

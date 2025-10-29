@@ -36,6 +36,7 @@ create_d8_pointer <- function(dem,
   # whitebox_wd should be NULL or directory
   check_spat_ras(dem)
   check_whitebox_wd(whitebox_wd)
+  check_logical(esri_pntr)
 
   opt_args <- rlang::list2(...)
 
@@ -99,6 +100,7 @@ create_d8_fa <- function(D8pointer,
     rlang::abort()
   }
 
+  check_spat_ras(D8pointer)
   ## check the output type
   check_out_type(out_type, arg = "out_type")
   check_logical(log)

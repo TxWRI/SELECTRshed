@@ -1,0 +1,16 @@
+test_that("create_fill_depressions returns expected types", {
+  testthat::skip_on_cran()
+  dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
+  dem <- terra::rast(dem)
+  x <- create_fill_depressions(dem)
+  testthat::expect_type(x, "S4")
+  testthat::expect_s4_class(create_fill_depressions(dem, fix_flats = FALSE), "SpatRaster")
+  testthat::expect_s4_class(create_fill_depressions(dem, flat_increment = 1), "SpatRaster")
+  testthat::expect_s4_class(create_fill_depressions(dem, max_depth = 100), "SpatRaster")
+  testthat::expect_s4_class(x, "SpatRaster")
+  testthat::expect_error(create_fill_depressions(terra::vect(system.file("ex/lux.shp", package="terra"))))
+  testthat::expect_error(create_fill_depressions(dem, fix_flats = 1))
+  testthat::expect_error(create_fill_depressions(dem, flat_increment = TRUE))
+  testthat::expect_error(create_fill_depressions(dem, max_depth = TRUE))
+
+})

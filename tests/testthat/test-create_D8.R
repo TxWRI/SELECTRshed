@@ -1,0 +1,23 @@
+test_that("create_d8_* returns expected types", {
+  testthat::skip_on_cran()
+  dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
+  dem <- terra::rast(dem)
+  breached <- create_breach_depression_lc(dem, dist = 10)
+  D8pointer <- create_d8_pointer(breached)
+  testthat::expect_type(D8pointer, "S4")
+  testthat::expect_s4_class(D8pointer, "SpatRaster")
+  testthat::expect_error(create_d8_pointer(terra::vect(system.file("ex/lux.shp", package="terra"))))
+  testthat::expect_error(create_d8_pointer(breached, esri_pntr = 1))
+
+  fa <- create_d8_fa(D8pointer)
+  testthat::expect_type(fa, "S4")
+  testthat::expect_s4_class(fa, "SpatRaster")
+  testthat::expect_error(create_d8_fa(terra::vect(system.file("ex/lux.shp", package="terra"))))
+  testthat::expect_error(create_d8_fa(D8pointer, out_type = "invalid"))
+  testthat::expect_error(create_d8_fa(D8pointer, log = "invalid"))
+  testthat::expect_error(create_d8_fa(D8pointer, clip = "invalid"))
+  testthat::expect_error(create_d8_fa(D8pointer, pntr = "invalid"))
+  testthat::expect_s4_class(create_d8_fa(breached, pntr = FALSE),
+                            "SpatRaster")
+  testthat::expect_error(create_d8_fa(D8pointer, esri_pntr = 1))
+})

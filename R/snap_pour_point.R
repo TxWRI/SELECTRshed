@@ -57,6 +57,7 @@ snap_pour_point <- function(pour_pts,
   check_spat_ras(streams)
   check_numeric(snap_dist)
   check_whitebox_wd(whitebox_wd)
+  check_wbt_type(type)
 
     ## check CRS and project the vector if needed.
   if(isFALSE(terra::same.crs(pour_pts, streams))) {
