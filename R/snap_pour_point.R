@@ -46,13 +46,7 @@ snap_pour_point <- function(pour_pts,
                             snap_dist = 90,
                             type = "terra",
                             ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-  ## check args
-  # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
-  # output should be valid file path
+  whitebox_bin()
   check_spat_vect(pour_pts)
   check_spat_ras(streams)
   check_numeric(snap_dist)

@@ -28,11 +28,7 @@ create_fill_depressions <- function(dem,
                                     flat_increment = NULL,
                                     max_depth = NULL,
                                     ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(dem)
   check_logical(fix_flats)
   check_whitebox_wd(whitebox_wd)

@@ -32,11 +32,8 @@ create_streams_vector <- function(streams,
                                   all_vertices = FALSE,
                                   ...) {
 
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
 
+  whitebox_bin()
   check_spat_ras(streams)
   check_spat_ras(d8_pointer)
   check_logical(esri_pntr)

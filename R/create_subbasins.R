@@ -26,11 +26,7 @@ create_subbasins <- function(d8_pntr,
                              whitebox_wd = NULL,
                              type = "terra",
                              ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(d8_pntr)
   check_spat_ras(streams)
   check_logical(esri_pntr)

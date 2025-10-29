@@ -17,11 +17,7 @@ create_single_pit_fill <- function(dem,
                                    output = tempfile(fileext = ".tif"),
                                    whitebox_wd = NULL,
                                    ...) {
-  ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
   check_spat_ras(dem)
   check_whitebox_wd(whitebox_wd)
 
