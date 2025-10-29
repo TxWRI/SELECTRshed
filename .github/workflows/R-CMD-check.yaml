@@ -45,6 +45,7 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+      - run: Rscript -e 'whitebox::install_whitebox()'
 
       - uses: r-lib/actions/check-r-package@v2
         with:
