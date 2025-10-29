@@ -26,10 +26,8 @@ create_d8_pointer <- function(dem,
                               ...) {
 
   ## need to check whitebox tools is installed
-  if(!whitebox::check_whitebox_binary()) {
-    rlang::abort()
-  }
-
+  whitebox_bin()
+  
   ## check args
   # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
   # output should be valid file path
