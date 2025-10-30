@@ -1,5 +1,6 @@
 test_that("create_fill_depressions returns expected types", {
   testthat::skip_on_cran()
+  testthat::skip_if_not(whitebox::check_whitebox_binary(), "whitebox binary not installed")
   dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   x <- create_fill_depressions(dem)

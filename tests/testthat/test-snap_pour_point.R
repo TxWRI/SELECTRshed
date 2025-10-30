@@ -1,6 +1,7 @@
 test_that("snap_pour_point_ returns expected types", {
   testthat::skip_on_cran()
-  dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+  testthat::skip_if_not(whitebox::check_whitebox_binary(), "whitebox binary not installed")
+  dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
   pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = terra::crs(dem))

@@ -1,5 +1,6 @@
 test_that("create_d8_* returns expected types", {
   testthat::skip_on_cran()
+  testthat::skip_if_not(whitebox::check_whitebox_binary(), "whitebox binary not installed")
   dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
   dem <- terra::rast(dem)
   breached <- create_breach_depression_lc(dem, dist = 10)

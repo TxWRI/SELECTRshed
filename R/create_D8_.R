@@ -14,7 +14,7 @@
 #' @export
 #' @examplesIf whitebox::check_whitebox_binary()
 #' # example code
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' create_d8_pointer(dem)
 #'
@@ -27,7 +27,7 @@ create_d8_pointer <- function(dem,
 
   ## need to check whitebox tools is installed
   whitebox_bin()
-  
+
   ## check args
   # dem should be terra obj, does not have to be file backed object since {whitebox} takes care of that when using `wbt()`
   # output should be valid file path
@@ -77,7 +77,7 @@ create_d8_pointer <- function(dem,
 #' @export
 #' @examplesIf whitebox::check_whitebox_binary()
 #' # example code
-#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+#' dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 #' dem <- terra::rast(dem)
 #' D8pointer <- create_d8_pointer(dem)
 #' create_d8_fa(D8pointer)

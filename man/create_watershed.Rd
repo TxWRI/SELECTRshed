@@ -37,7 +37,7 @@ Identifies the watershed, or drainage basin, draining to a set of target cells.
 }
 \examples{
 \dontshow{if (whitebox::check_whitebox_binary()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTR")
+dem <- system.file("extdata", "thompsoncreek.tif", package = "SELECTRdata")
 dem <- terra::rast(dem)
 gpkg <- system.file("extdata", "thompsoncreek.gpkg", package = "SELECTRdata")
 pourpoint <- terra::vect(gpkg, layer = "pourpoint", crs = terra::crs(dem))
